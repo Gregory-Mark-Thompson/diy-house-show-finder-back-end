@@ -24,7 +24,7 @@ const gigSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['News', 'Sports', 'Games', 'Movies', 'Music', 'Television'],
+      enum: ['Rock', 'Metal', 'Punk', 'R&B', 'Rapp', 'Techno/Elctronic', 'Country', 'Folk/World'],
     },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     comments: [commentSchema]
