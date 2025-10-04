@@ -1,14 +1,14 @@
 const express = require('express');
 const verifyToken = require('../middleware/verify-token.js');
-const Hoot = require('../models/hoot.js');
+const Gig = require('../models/gig.js');
 const router = express.Router();
 
 router.post('/', verifyToken, async (req, res) => {
   try {
     req.body.author = req.user._id;
-    const hoot = await Hoot.create(req.body);
-    hoot._doc.author = req.user;
-    res.status(201).json(hoot);
+    const gig = await Gig.create(req.body);
+    gig._doc.author = req.user;
+    res.status(201).json(gig);
   } catch (error) {
     res.status(500).json(error);
   }
@@ -16,79 +16,79 @@ router.post('/', verifyToken, async (req, res) => {
 
 router.get('/', verifyToken, async (req, res) => {
   try {
-    const hoots = await Hoot.find({})
+    const gigs = await Gig.find({})
       .populate('author')
       .sort({ createdAt: 'desc' });
-    res.status(200).json(hoots);
+    res.status(200).json(gigs);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.get('/:hootId', verifyToken, async (req, res) => {
+router.get('/:gigId', verifyToken, async (req, res) => {
   try {
-    // populate author of hoot and comments
-    const hoot = await Hoot.findById(req.params.hootId).populate([
+    // populate author of gig and comments
+    const gig = await Gig.findById(req.params.gigId).populate([
       'author',
       'comments.author',
     ]);
-    res.status(200).json(hoot);
+    res.status(200).json(gig);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
 
-router.put('/:hootId', verifyToken, async (req, res) => {
+router.put('/:gigId', verifyToken, async (req, res) => {
   try {
-    // Find the hoot:
-    const hoot = await Hoot.findById(req.params.hootId);
+    // Find the gig:
+    const gig = await Gig.findById(req.params.gigId);
 
     // Check permissions:
-    if (!hoot.author.equals(req.user._id)) {
+    if (!gig.author.equals(req.user._id)) {
       return res.status(403).send("You're not allowed to do that!");
     }
 
-    // Update hoot:
-    const updatedHoot = await Hoot.findByIdAndUpdate(
-      req.params.hootId,
+    // Update gig:
+    const updatedGig = await Gig.findByIdAndUpdate(
+      req.params.gigId,
       req.body,
       { new: true }
     );
 
     // Append req.user to the author property:
-    updatedHoot._doc.author = req.user;
+    updatedGig._doc.author = req.user;
 
     // Issue JSON response:
-    res.status(200).json(updatedHoot);
+    res.status(200).json(updatedGig);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.delete('/:hootId', verifyToken, async (req, res) => {
+router.delete('/:gigId', verifyToken, async (req, res) => {
   try {
-    const hoot = await Hoot.findById(req.params.hootId);
+    const gig = await Gig.findById(req.params.gigId);
 
-    if (!hoot.author.equals(req.user._id)) {
+    if (!gig.author.equals(req.user._id)) {
       return res.status(403).send("You're not allowed to do that!");
     }
 
-    const deletedHoot = await Hoot.findByIdAndDelete(req.params.hootId);
-    res.status(200).json(deletedHoot);
+    const deletedGig = await Gig.findByIdAndDelete(req.params.gigId);
+    res.status(200).json(deletedGig);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.post('/:hootId/comments', verifyToken, async (req, res) => {
+router.post('/:gigId/comments', verifyToken, async (req, res) => {
   try {
     req.body.author = req.user._id;
-    const hoot = await Hoot.findById(req.params.hootId);
-    hoot.comments.push(req.body);
-    await hoot.save();
+    const gig = await Gig.findById(req.params.gigId);
+    gig.comments.push(req.body);
+    await gig.save();
 
     // Find the newly created comment:
-    const newComment = hoot.comments[hoot.comments.length - 1];
+    const newComment = gig.comments[gig.comments.length - 1];
 
     newComment._doc.author = req.user;
 
@@ -99,10 +99,10 @@ router.post('/:hootId/comments', verifyToken, async (req, res) => {
   }
 });
 
-router.put('/:hootId/comments/:commentId', verifyToken, async (req, res) => {
+router.put('/:gigId/comments/:commentId', verifyToken, async (req, res) => {
   try {
-    const hoot = await Hoot.findById(req.params.hootId);
-    const comment = hoot.comments.id(req.params.commentId);
+    const gig = await Gig.findById(req.params.gigId);
+    const comment = gig.comments.id(req.params.commentId);
 
     // ensures the current user is the author of the comment
     if (comment.author.toString() !== req.user._id) {
@@ -112,17 +112,17 @@ router.put('/:hootId/comments/:commentId', verifyToken, async (req, res) => {
     }
 
     comment.text = req.body.text;
-    await hoot.save();
+    await gig.save();
     res.status(200).json({ message: 'Comment updated successfully' });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
 
-router.delete('/:hootId/comments/:commentId', verifyToken, async (req, res) => {
+router.delete('/:gigId/comments/:commentId', verifyToken, async (req, res) => {
   try {
-    const hoot = await Hoot.findById(req.params.hootId);
-    const comment = hoot.comments.id(req.params.commentId);
+    const gig = await Gig.findById(req.params.gigId);
+    const comment = gig.comments.id(req.params.commentId);
 
     // ensures the current user is the author of the comment
     if (comment.author.toString() !== req.user._id) {
@@ -131,8 +131,8 @@ router.delete('/:hootId/comments/:commentId', verifyToken, async (req, res) => {
         .json({ message: 'You are not authorized to edit this comment' });
     }
 
-    hoot.comments.remove({ _id: req.params.commentId });
-    await hoot.save();
+    gig.comments.remove({ _id: req.params.commentId });
+    await gig.save();
     res.status(200).json({ message: 'Comment deleted successfully' });
   } catch (err) {
     res.status(500).json({ err: err.message });

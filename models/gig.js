@@ -11,7 +11,7 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const hootSchema = new mongoose.Schema(
+const gigSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -32,6 +32,6 @@ const hootSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Hoot = mongoose.model('Hoot', hootSchema);
+const Gig = mongoose.model('Gig', gigSchema);
 
-module.exports = Hoot;
+module.exports = Gig;
