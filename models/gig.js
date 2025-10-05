@@ -1,16 +1,5 @@
 const mongoose = require('mongoose');
 
-const commentSchema = new mongoose.Schema(
-  {
-    text: {
-      type: String,
-      required: true
-    },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-  },
-  { timestamps: true }
-);
-
 const gigSchema = new mongoose.Schema(
   {
     title: {
@@ -24,10 +13,9 @@ const gigSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['Rock', 'Metal', 'Punk', 'R&B', 'Rapp', 'Techno/Elctronic', 'Country', 'Folk/World'],
+      enum: ['Rock', 'Metal', 'Punk', 'R&B', 'Rap', 'Techno/Electronic', 'Country', 'Folk/World'],
     },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    comments: [commentSchema]
   },
   { timestamps: true }
 );
