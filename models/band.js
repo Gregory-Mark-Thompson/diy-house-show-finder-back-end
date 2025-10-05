@@ -13,7 +13,7 @@ const bandSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['Rock', 'Metal', 'Punk', 'R&B', 'Rapp', 'Techno/Elctronic', 'Country', 'Folk/World'],
+      enum: ['Rock', 'Metal', 'Punk', 'R&B', 'Rapp', 'Techno/Electronic', 'Country', 'Folk/World'],
     },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },

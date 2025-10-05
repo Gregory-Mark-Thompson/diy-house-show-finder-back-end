@@ -26,6 +26,21 @@ router.get('/', verifyToken, async (req, res) => {
 });
 
 
+router.get('/:bandId', verifyToken, async (req, res) => {
+  try {
+    const band = await Band.findById(req.params.bandId).populate([
+      'author',
+    ]);
+    if (!band) {
+      return res.status(404).json({ err: 'Band not found.' });
+    }
+    res.status(200).json(band);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+
 router.put('/:bandId', verifyToken, async (req, res) => {
   try {
     // Find the band:
