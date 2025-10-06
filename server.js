@@ -34,6 +34,6 @@ app.use('/gigs', gigsRouter);
 app.use('/bands', bandsRouter);
 
 // Start the server and listen on port 3000
-app.listen(3000, () => {
+app.listen(process.env.PORT||3000, () => {
   console.log('The express app is ready!');
 });
