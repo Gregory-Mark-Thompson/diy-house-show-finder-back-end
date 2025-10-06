@@ -24,7 +24,7 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const bands = await Band.find({})
       .populate('author')
@@ -36,7 +36,7 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-router.get('/:bandId', verifyToken, async (req, res) => {
+router.get('/:bandId', async (req, res) => {
   try {
     const band = await Band.findById(req.params.bandId).populate('author');
     if (!band) {
