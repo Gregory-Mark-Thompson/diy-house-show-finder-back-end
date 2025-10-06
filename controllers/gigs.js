@@ -59,7 +59,7 @@ router.delete('/:gigId', verifyToken, async (req, res) => {
     const gig = await Gig.findById(req.params.gigId);
     if (!gig) return res.status(404).json({ error: 'Gig not found' });
     if (!gig.author.equals(req.user._id)) return res.status(403).json({ error: 'Not authorized' });
-    await Comment.deleteMany({ gig: req.params.gigId }); // Clean up comments
+    await Comment.deleteMany({ gig: req.params.gigId });
     const deletedGig = await Gig.findByIdAndDelete(req.params.gigId);
     res.status(200).json(deletedGig);
   } catch (error) {
@@ -77,7 +77,6 @@ router.get('/:gigId/comments', verifyToken, async (req, res) => {
     if (!gig) return res.status(404).json({ error: 'Gig not found' });
     const isGigAuthor = gig.author.equals(req.user._id);
 
-    // For non-authors, check participation first (quick count query)
     if (!isGigAuthor) {
       const count = await Comment.countDocuments({ gig: req.params.gigId, author: req.user._id });
       if (count === 0) {
@@ -85,12 +84,10 @@ router.get('/:gigId/comments', verifyToken, async (req, res) => {
       }
     }
 
-    // Fetch all comments for the gig (small scale, so fine)
     const commentsList = await Comment.find({ gig: req.params.gigId })
       .populate('author', 'username')
       .sort({ createdAt: 'asc' });
 
-    // Build nested tree from flat list
     function buildTree(comments, parentId = null) {
       return comments
         .filter(c => (c.parent ? c.parent.toString() : null) === parentId)
@@ -102,7 +99,6 @@ router.get('/:gigId/comments', verifyToken, async (req, res) => {
 
     let topLevelComments = buildTree(commentsList);
 
-    // For non-authors, filter to only threads they participated in
     if (!isGigAuthor) {
       const userCommentIds = commentsList
         .filter(c => c.author._id.equals(req.user._id))

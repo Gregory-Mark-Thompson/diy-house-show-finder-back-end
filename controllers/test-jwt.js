@@ -13,10 +13,10 @@ router.get('/sign-token', (req, res) => {
 
 router.post('/verify-token', (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
-  console.log('verify-token - Token:', token); // Debug
+  console.log('verify-token - Token:', token);
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('verify-token - Decoded:', decoded); // Debug
+    console.log('verify-token - Decoded:', decoded);
     res.json({ decoded });
   } catch (err) {
     console.error('verify-token - Error:', err.message);
