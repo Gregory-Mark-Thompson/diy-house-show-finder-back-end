@@ -1,8 +1,10 @@
 const express = require('express');
-const verifyToken = require('../middleware/verify-token.js');
-const Band = require('../models/band.js');
-const User = require('../models/user.js');
 const router = express.Router();
+const { verifyToken } = require('../middleware/verify-token');
+const Band = require('../models/band');
+const User = require('../models/user');
+
+console.log('verifyToken in bands.js:', typeof verifyToken, verifyToken); // Debug
 
 router.post('/', verifyToken, async (req, res) => {
   try {
