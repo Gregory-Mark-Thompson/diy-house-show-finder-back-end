@@ -4,7 +4,7 @@ const { verifyToken } = require('../middleware/verify-token');
 const Band = require('../models/band');
 const User = require('../models/user');
 
-console.log('verifyToken in bands.js:', typeof verifyToken, verifyToken); // Debug
+console.log('verifyToken in bands.js:', typeof verifyToken, verifyToken);
 
 router.post('/', verifyToken, async (req, res) => {
   try {
@@ -26,9 +26,14 @@ router.post('/', verifyToken, async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const bands = await Band.find({})
+    console.log(req.query.category)
+//    if (req.query.category) {
+      const bands = await Band.find(req.query.category ? {category:req.query.category}: {})
       .populate('author')
-      .sort({ createdAt: 'desc' });
+      .sort({ createdAt: 'desc' }); 
+//    } else {
+
+//    }
     res.status(200).json(bands);
   } catch (error) {
     console.error('GET /bands - Error:', error.message, error.stack);
