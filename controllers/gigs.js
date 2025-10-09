@@ -18,6 +18,7 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 router.get('/', verifyToken, async (req, res) => {
+  console.log("Test");
   try {
     const gigs = await Gig.find({})
       .populate('author')
