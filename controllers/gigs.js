@@ -20,7 +20,8 @@ router.post('/', verifyToken, async (req, res) => {
 router.get('/', verifyToken, async (req, res) => {
   console.log("Test");
   try {
-    const gigs = await Gig.find({})
+    const gigs = await Gig.find(req.query.category ? {category:req.query.category}: {})
+
       .populate('author')
       .sort({ createdAt: 'desc' });
     res.status(200).json(gigs);
